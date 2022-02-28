@@ -7,3 +7,8 @@ my-element.js
 my-element.js.map
 my-element.d.ts
 my-element.d.ts.map
+
+mockData.js.map
+mockData.js
+mockData.d.ts
+mockData.d.ts.map

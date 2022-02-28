@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    // "typeRoots": ["node_modules/fuzzysort"],
+    // "types": ["mocha","fuzzysort"],
     "target": "es2019",
     "module": "es2020",
     "lib": ["es2020", "DOM", "DOM.Iterable"],
@@ -11,6 +13,7 @@
     "rootDir": "./src",
     "strict": true,
     "noUnusedLocals": true,
+    "esModuleInterop": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
@@ -28,6 +31,7 @@
       }
     ]
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "tests/**/*.ts"],
+
   "exclude": []
 }
