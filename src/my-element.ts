@@ -109,7 +109,6 @@ export class MyElement extends LitElement {
     this.setListeners()
   }
   override updated(changed: { has: (arg0: string) => any; }) {
-    console.log('updated');
     if (
       changed.has('opened') &&
       this.opened &&
@@ -180,13 +179,11 @@ export class MyElement extends LitElement {
   }
 
   onFocus() {
-    console.log('on focus!');
     this._blur = false;
     this.results.length && this.open();
   }
 
   onBlur() {
-    console.log('on blur!');
     this._blur = true;
     !this.mouseEnter && this.close();
   }
@@ -201,14 +198,12 @@ export class MyElement extends LitElement {
   }
 
   open() {
-    console.log('open()');
     if (this.results.length) {
       this.opened = true;
     }
   }
 
   close() {
-    console.log('close()');
     this.results = EMPTY_RESULTS;
     this.opened = false;
     this.highlightedEl = null;
@@ -222,7 +217,6 @@ export class MyElement extends LitElement {
   }
 
   onChangeHandler(e: Event) {
-    console.log('channge');
     this.keyword = (e.currentTarget as any).value;
     this.results = fuzzysort.go((e.currentTarget as any).value, data);
     this.opened = this.results.length > 0
@@ -231,7 +225,7 @@ export class MyElement extends LitElement {
 
   override render() {
     return html`
-        <h1>Lit AutoComplete 14</h1>
+        <h1>Lit AutoComplete</h1>
         <div>
           <input
            id="auto-complete"
