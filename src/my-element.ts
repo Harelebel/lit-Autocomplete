@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-var-requires */
 /**
  * @license
  * Copyright 2019 Google LLC
@@ -246,7 +244,7 @@ export class MyElement extends LitElement {
         ${(this.results !== null && this.results.length > 0)
         ? this.results.map((item: any, index: number) => {
           return html`<li key=${index}  @click=${() => this.onItemClick(index)}  >
-                         ${this.fuzzysort.highlight(this.fuzzysort.single(this.keyword, item),'<a>','</a>')}
+                         ${this.fuzzysort.highlight(this.fuzzysort.single(this.keyword, item),  '<b>', '</b>')}
                          </li>`;
         })
         : null
