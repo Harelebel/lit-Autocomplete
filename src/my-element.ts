@@ -8,6 +8,11 @@ import { LitElement, html, css } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { data } from './mockData';
 
+declare const fuzzysort: Fuzzysort.Fuzzysort;
+
+const EMPTY_RESULTS:Fuzzysort.Results = [] as any;
+Object.defineProperty(EMPTY_RESULTS,"total",{writable: false});
+
 @customElement('my-element')
 export class MyElement extends LitElement {
   static override styles = css`
@@ -65,11 +70,10 @@ export class MyElement extends LitElement {
     { callback: this.onKeyUp, eventName: 'keyup' }];
   }
 
-  @property({ attribute: false }) fuzzysort = (window as any).fuzzysort;
 
   @property({ type: Array }) listenerHandlers;
 
-  @property({ attribute: false }) results: any[] = [];
+  @property({ attribute: false }) results: Fuzzysort.Results = EMPTY_RESULTS;
 
   @property() keyword = '';
 
@@ -145,7 +149,7 @@ export class MyElement extends LitElement {
         break;
 
       case `Escape`:
-        this.results = [];
+        this.results = EMPTY_RESULTS;
         this.keyword = '';
         (this._input as HTMLInputElement).value = '';
         this.close()
@@ -205,7 +209,7 @@ export class MyElement extends LitElement {
 
   close() {
     console.log('close()');
-    this.results = []
+    this.results = EMPTY_RESULTS;
     this.opened = false;
     this.highlightedEl = null;
   }
@@ -220,14 +224,14 @@ export class MyElement extends LitElement {
   onChangeHandler(e: Event) {
     console.log('channge');
     this.keyword = (e.currentTarget as any).value;
-    this.results = this.fuzzysort.go((e.currentTarget as any).value, data);
+    this.results = fuzzysort.go((e.currentTarget as any).value, data);
     this.opened = this.results.length > 0
     this.results.length == 0 && this.close();
   }
 
   override render() {
     return html`
-        <h1>Lit AutoComplete</h1>
+        <h1>Lit AutoComplete 14</h1>
         <div>
           <input
            id="auto-complete"
@@ -243,9 +247,7 @@ export class MyElement extends LitElement {
         >      
         ${(this.results !== null && this.results.length > 0)
         ? this.results.map((item: any, index: number) => {
-          return html`<li key=${index}  @click=${() => this.onItemClick(index)}  >
-                         ${this.fuzzysort.highlight(this.fuzzysort.single(this.keyword, item),  '<b>', '</b>')}
-                         </li>`;
+          return html`<li key=${index} .innerHTML=${fuzzysort.highlight(fuzzysort.single(this.keyword, item),  '<b>', '</b>')}  @click=${() => this.onItemClick(index)}  ></li>`;
         })
         : null
       }

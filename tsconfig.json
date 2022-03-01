@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
-    // "typeRoots": ["node_modules/fuzzysort"],
-    // "types": ["mocha","fuzzysort"],
+    "types": ["mocha","fuzzysort"],
     "target": "es2019",
     "module": "es2020",
     "lib": ["es2020", "DOM", "DOM.Iterable"],
@@ -9,6 +8,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "inlineSources": true,
+    "skipLibCheck": true,
     "outDir": "./",
     "rootDir": "./src",
     "strict": false,
