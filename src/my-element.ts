@@ -6,7 +6,6 @@
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-// @ts-nocheck 
 import { LitElement, html, css } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { data } from './mockData';
@@ -40,6 +39,10 @@ export class MyElement extends LitElement {
         }
   
     `;
+  opened: any;
+  highlightedEl: HTMLElement | Element | undefined;
+  mouseEnter: boolean;
+  _blur: boolean;
 
   static override get properties() {
     return {
@@ -55,24 +58,25 @@ export class MyElement extends LitElement {
     this._input = this.shadowRoot?.getElementById('auto-complete');
     return this._input;
   }
- 
+
   constructor() {
     super();
-    this.listenerHandlers = [{callback:this.onFocus,eventName:'focus'},
-    {callback:this.onBlur,eventName:'blur'},
-    {callback:this.onKeyDown,eventName:'keydown'},
-    {callback:this.onKeyUp,eventName:'keyup'}];
+    this.listenerHandlers = [{ callback: this.onFocus, eventName: 'focus' },
+    { callback: this.onBlur, eventName: 'blur' },
+    { callback: this.onKeyDown, eventName: 'keydown' },
+    { callback: this.onKeyUp, eventName: 'keyup' }];
   }
 
-  @property({ attribute: false })  fuzzysort = (window as any).fuzzysort;
+  @property({ attribute: false }) fuzzysort = (window as any).fuzzysort;
 
   @property({ type: Array }) listenerHandlers;
 
-  @property({ attribute: false }) results = [];
+  @property({ attribute: false }) results: any[] = [];
 
   @property() keyword = '';
 
-  @query('input', true) _input!: HTMLInputElement;
+  @query('input', true) _input!: HTMLElement | HTMLInputElement | null | undefined;
+  @query('ul', true) list!: HTMLElement | null | undefined;
 
 
   override disconnectedCallback() {
@@ -82,32 +86,32 @@ export class MyElement extends LitElement {
 
   setListeners() {
     this.list = this.shadowRoot?.getElementById('list');
-    
-    this.listenerHandlers.forEach(handler=>{
-      this.contentElement.addEventListener(
+
+    this.listenerHandlers.forEach(handler => {
+      this.contentElement?.addEventListener(
         handler.eventName,
         handler.callback.bind(this)
       );
-    })  
+    })
   }
   removeListeners() {
-    this.listenerHandlers.forEach(handler=>{
-      this.contentElement.removeEventListener(
+    this.listenerHandlers.forEach(handler => {
+      this.contentElement?.removeEventListener(
         handler.eventName,
         handler.callback.bind(this)
       );
-    })  
+    })
   }
   override firstUpdated() {
     super.connectedCallback()
     this.setListeners()
   }
-  updated(changed) {
+  override updated(changed: { has: (arg0: string) => any; }) {
     console.log('updated');
     if (
       changed.has('opened') &&
       this.opened &&
-      this.list.childElementCount
+      this.list?.childElementCount
     ) {
       for (const item of this.list.children) {
         item.classList.remove('active');
@@ -116,14 +120,14 @@ export class MyElement extends LitElement {
       this.highlightedEl.classList.add('active');
     }
   }
-  onKeyDown(ev) {
+  onKeyDown(ev: KeyboardEvent): void {
     if (ev.key === 'ArrowUp' || ev.key === 'ArrowDown') {
       ev.preventDefault();
       ev.stopPropagation();
     }
   }
 
-  onKeyUp(ev) {
+  onKeyUp(ev: { key: any; preventDefault: () => void; stopPropagation: () => void; }) {
     switch (ev.key) {
       case 'ArrowUp':
         ev.preventDefault();
@@ -139,13 +143,13 @@ export class MyElement extends LitElement {
         break;
 
       case 'Enter':
-        this.highlightedEl && this.highlightedEl.click();
+        this.highlightedEl && (this.highlightedEl as HTMLElement).click();
         break;
 
       case `Escape`:
         this.results = [];
-        this.keyword = ''
-        this._input.value = ''
+        this.keyword = '';
+        (this._input as HTMLInputElement).value = '';
         this.close()
         break;
 
@@ -175,13 +179,13 @@ export class MyElement extends LitElement {
 
   onFocus() {
     console.log('on focus!');
-    this.blur = false;
+    this._blur = false;
     this.results.length && this.open();
   }
-  
+
   onBlur() {
     console.log('on blur!');
-    this.blur = true;
+    this._blur = true;
     !this.mouseEnter && this.close();
   }
 
@@ -189,9 +193,9 @@ export class MyElement extends LitElement {
     this.mouseEnter = true;
   }
 
-  handleItemMouseLeave(ev) {
+  handleItemMouseLeave() {
     this.mouseEnter = false;
-    this.blur && setTimeout(() => this.close(), 500);
+    this._blur && setTimeout(() => this.close(), 500);
   }
 
   open() {
@@ -207,7 +211,7 @@ export class MyElement extends LitElement {
     this.opened = false;
     this.highlightedEl = null;
   }
-  
+
   onItemClick(index: number) {
     console.log(this.results[index].target)
     this.highlightedEl.classList.remove('active');
@@ -242,7 +246,7 @@ export class MyElement extends LitElement {
         ${(this.results !== null && this.results.length > 0)
         ? this.results.map((item: any, index: number) => {
           return html`<li key=${index}  @click=${() => this.onItemClick(index)}  >
-                         ${this.fuzzysort.highlight(this.fuzzysort.single(this.keyword, item))}
+                         ${this.fuzzysort.highlight(this.fuzzysort.single(this.keyword, item),'<a>','</a>')}
                          </li>`;
         })
         : null

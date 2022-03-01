@@ -11,7 +11,7 @@
     "inlineSources": true,
     "outDir": "./",
     "rootDir": "./src",
-    "strict": true,
+    "strict": false,
     "noUnusedLocals": true,
     "esModuleInterop": true,
     "noUnusedParameters": true,
